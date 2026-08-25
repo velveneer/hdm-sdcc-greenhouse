@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greenhouse
+  namespace: sdcc-greenhouse
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: greenhouse
+  template:
+    metadata:
+      labels:
+        app: greenhouse
+    spec:
+      containers:
+        - name: simulator
+          image: ghcr.io/velveneer/sdcc-greenhouse:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: STATE_FILE
+              value: /tmp/greenhouse-state.json
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests: { cpu: 50m, memory: 96Mi }
+            limits: { memory: 256Mi }

@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci-deployer
+  namespace: sdcc-greenhouse
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ci-deployer
+  namespace: sdcc-greenhouse
+rules:
+  - apiGroups: ['apps']
+    resources: ['deployments']
+    verbs: ['get', 'list', 'watch', 'patch', 'update']
+  - apiGroups: ['apps']
+    resources: ['replicasets']
+    verbs: ['get', 'list', 'watch']
+  - apiGroups: ['']
+    resources: ['pods']
+    verbs: ['get', 'list', 'watch']
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ci-deployer
+  namespace: sdcc-greenhouse
+subjects:
+  - kind: ServiceAccount
+    name: ci-deployer
+    namespace: sdcc-greenhouse
+roleRef:
+  kind: Role
+  name: ci-deployer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gha-runner
+  namespace: sdcc-greenhouse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gha-runner
+  template:
+    metadata:
+      labels:
+        app: gha-runner
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      serviceAccountName: ci-deployer
+      containers:
+        - name: runner
+          image: myoung34/github-runner:latest
+          env:
+            - name: REPO_URL
+              value: https://github.com/velveneer/sdcc-greenhouse
+            - name: RUNNER_NAME
+              value: k3s-deploy-greenhouse
+            - name: LABELS
+              value: deploy-greenhouse
+            - name: EPHEMERAL
+              value: 'true'
+            - name: ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gha-runner-token
+                  key: token
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { memory: 512Mi }
