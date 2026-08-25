@@ -1,0 +1,31 @@
+{
+    "name": "velveneer/sdcc-greenhouse",
+    "description": "Simulated greenhouse edge device and GitOps reconciler",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "friendsofphp/php-cs-fixer": "^3.64"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sdcc\\Greenhouse\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sdcc\\Greenhouse\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "fmt": "php-cs-fixer fix",
+        "fmt:check": "php-cs-fixer fix --dry-run --diff"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
