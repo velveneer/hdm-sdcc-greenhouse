@@ -57,7 +57,7 @@ spec:
           image: myoung34/github-runner:latest
           env:
             - name: REPO_URL
-              value: https://github.com/velveneer/sdcc-greenhouse
+              value: https://github.com/velveneer/hdm-sdcc-greenhouse
             - name: RUNNER_NAME
               value: k3s-deploy-greenhouse
             - name: LABELS
