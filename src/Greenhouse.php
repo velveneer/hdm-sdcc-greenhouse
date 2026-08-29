@@ -18,8 +18,9 @@ final class Greenhouse
     public const ACTUATORS = [
         'pump' => ['on', 'off'],
         'fan' => ['on', 'off'],
+        'vent' => ['on', 'off'],
         'lamp' => ['on', 'off'],
-        'window' => ['open', 'closed'],
+        'door' => ['open', 'closed'],
     ];
 
     /**
@@ -34,8 +35,9 @@ final class Greenhouse
             'actuators' => [
                 'pump' => 'off',
                 'fan' => 'off',
+                'vent' => 'off',
                 'lamp' => 'off',
-                'window' => 'closed',
+                'door' => 'closed',
             ],
         ];
     }
@@ -51,17 +53,21 @@ final class Greenhouse
 
         $outside = self::outsideTemperature($now);
 
-        $target = $actuators['window'] === 'open' ? $outside + 1.0 : $outside + 6.0;
+        $target = $actuators['door'] === 'open' ? $outside + 1.0 : $outside + 6.0;
 
         if ($actuators['fan'] === 'on') {
             $target -= 3.0;
+        }
+
+        if ($actuators['vent'] === 'on') {
+            $target -= 1.5;
         }
 
         if ($actuators['lamp'] === 'on') {
             $target += 1.5;
         }
 
-        $tau = $actuators['window'] === 'open'
+        $tau = $actuators['door'] === 'open'
             ? self::TAU_TEMP_OPEN
             : self::TAU_TEMP_CLOSED;
 
@@ -114,7 +120,7 @@ final class Greenhouse
             $lux += 400.0;
         }
 
-        if ($state['actuators']['window'] === 'closed') {
+        if ($state['actuators']['door'] === 'closed') {
             $lux *= 0.85;
         }
 

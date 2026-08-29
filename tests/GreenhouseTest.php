@@ -17,7 +17,7 @@ final class GreenhouseTest extends TestCase
         $state = Greenhouse::initial(self::NOON);
 
         $this->assertSame(
-            ['pump' => 'off', 'fan' => 'off', 'lamp' => 'off', 'window' => 'closed'],
+            ['pump' => 'off', 'fan' => 'off', 'vent' => 'off', 'lamp' => 'off', 'door' => 'closed'],
             $state['actuators'],
         );
     }
@@ -66,6 +66,30 @@ final class GreenhouseTest extends TestCase
         $cooled = Greenhouse::advance($cooled, self::NOON + 1800);
 
         $this->assertLessThan($baseline['temperature'], $cooled['temperature']);
+    }
+
+    public function test_the_vent_pulls_temperature_down(): void
+    {
+        $baseline = Greenhouse::advance(Greenhouse::initial(self::NOON), self::NOON + 1800);
+
+        $cooled = Greenhouse::initial(self::NOON);
+        $cooled['actuators']['vent'] = 'on';
+        $cooled = Greenhouse::advance($cooled, self::NOON + 1800);
+
+        $this->assertLessThan($baseline['temperature'], $cooled['temperature']);
+    }
+
+    public function test_the_vent_is_a_weaker_cooler_than_the_fan(): void
+    {
+        $vented = Greenhouse::initial(self::NOON);
+        $vented['actuators']['vent'] = 'on';
+        $vented = Greenhouse::advance($vented, self::NOON + 1800);
+
+        $fanned = Greenhouse::initial(self::NOON);
+        $fanned['actuators']['fan'] = 'on';
+        $fanned = Greenhouse::advance($fanned, self::NOON + 1800);
+
+        $this->assertGreaterThan($fanned['temperature'], $vented['temperature']);
     }
 
     public function test_the_lamp_adds_light(): void
