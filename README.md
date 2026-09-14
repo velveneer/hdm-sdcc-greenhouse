@@ -1,7 +1,7 @@
 # sdcc-greenhouse
 
 Simulated greenhouse edge device for the Software Development for Cloud Computing project. A
-framework-free PHP HTTP API standing in for the physical device the reconciler drives: five
+framework-free PHP HTTP API standing in for the physical device the reconciler drives. Five
 actuators (`pump`, `fan`, `vent`, `lamp`, `door`), a lazy physics model for temperature,
 moisture, and light, and no state persisted across a restart, on purpose.
 
