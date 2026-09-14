@@ -48,7 +48,7 @@ final class GreenhouseTest extends TestCase
         $state = Greenhouse::initial(self::NOON);
         $state['actuators']['pump'] = 'on';
 
-        // MAX_STEP caps a single call, so step forward repeatedly.
+        /* MAX_STEP caps a single call, so step forward repeatedly. */
         for ($i = 1; $i <= 10; $i++) {
             $state = Greenhouse::advance($state, self::NOON + ($i * 3600));
         }
@@ -108,7 +108,7 @@ final class GreenhouseTest extends TestCase
         $state = Greenhouse::initial(self::NOON);
         $advanced = Greenhouse::advance($state, self::NOON);
 
-        // dt is zero, so only the deterministic jitter applies.
+        /* dt is zero, so only the deterministic jitter applies. */
         $this->assertEqualsWithDelta(
             $state['temperature'],
             $advanced['temperature'],
