@@ -11,6 +11,7 @@ final class Greenhouse
     private const TAU_TEMP_OPEN = 240.0;
 
     private const TAU_MOISTURE_WATERING = 90.0;
+
     private const TAU_MOISTURE_DRYING = 5400.0;
 
     private const MAX_STEP = 3600.0;
@@ -157,4 +158,5 @@ final class Greenhouse
     {
         return max($low, min($high, $value));
     }
+    //
 }
